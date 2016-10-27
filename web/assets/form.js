@@ -38,7 +38,7 @@
 
 
             $.ajax({
-                url: '/index.php/form/submit/'+channel,
+                url: '/form/submit/'+channel,
                 type: 'post',
                 dataType: 'json',
                 data: formvars,
@@ -81,7 +81,7 @@
 
             var formvars = {};
             $.ajax({
-                url: '/index.php/form/delete/'+channel+'/'+muid,
+                url: '/form/delete/'+channel+'/'+muid,
                 type: 'post',
                 dataType: 'json',
                 data: formvars,
