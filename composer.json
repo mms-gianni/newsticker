@@ -1,0 +1,9 @@
+{
+    "require": {
+        "silex/silex": "~2.0",
+        "fanout/fanout": "^2.0",
+        "twig/twig": "^1.26",
+        "ext-mongodb": "^1.1",
+        "doctrine/dbal": "~2.2"
+    }
+}

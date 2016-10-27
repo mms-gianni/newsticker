@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>Newsticker client</title>
+        <script src="http://f4ba43e0.fanoutcdn.com/bayeux/static/faye-browser-min.js"></script>
+        <script type="text/javascript">
+
+            var client = new Faye.Client('http://f4ba43e0.fanoutcdn.com/bayeux');
+            client.subscribe('/newsticker', function (data) {
+                alert('got data: ' + data);
+            });
+
+        </script>
+    </head>
+    <body>
+
+    </body>
+</html>
