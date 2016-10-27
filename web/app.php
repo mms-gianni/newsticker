@@ -13,13 +13,22 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__.'/../views',
 ));
 
+$dburl = parse_url(getenv("CLEARDB_DATABASE_URL"));
+
+$dbhost = $dburl["host"];
+$dbuser = $dburl["user"];
+$dbpass = $dburl["pass"];
+$dbport = $dburl["port"];
+$dbname = substr($dburl["path"], 1);
+
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array (
         'driver'    => 'pdo_mysql',
-        'host'      => 'mysql_read.someplace.tld',
-        'dbname'    => 'my_database',
-        'user'      => 'my_username',
-        'password'  => 'my_password',
+        'host'      => $dbhost,
+        'dbname'    => $dbname,
+        'user'      => $dbuser,
+        'password'  => $dbpass,
+        'port'      => $dbport,
         'charset'   => 'utf8mb4',
     ),
 ));
@@ -33,7 +42,18 @@ $app->get('/form/{channel}', function ($channel) use ($app) {
 
 
 $app->get('/db/', function () use ($app) {
+/*
+    $sql = "SELECT * FROM messages LIMIT 10";
+    $post = $app['db']->fetchAssoc($sql);
+*/
 
+
+        $message_arr = array(
+            'body' => "testbody"
+        );
+        print_r($message_arr);
+        $app['db']->insert('messages', $message_arr);
+/*
     $mongo = new MongoDB\Driver\Manager("mongodb://peter:dermeter@ds031257.mlab.com:31257/newsticker");
     var_dump($mongo);
 
@@ -47,58 +67,49 @@ $app->get('/db/', function () use ($app) {
 
 $app->post('/form/submit/{channel}', function ( Request $request, $channel) use ($app) {
 
-    $mongo = new MongoDB\Driver\Manager("mongodb://peter:dermeter@ds031257.mlab.com:31257/newsticker");
-    $bulk = new MongoDB\Driver\BulkWrite;
+    $muid = $app->escape($request->get('muid'));
 
-    $title = $request->get('title');
-    $body = $request->get('body');
-    $muid = $request->get('muid');
-    $time = time();
+    $message_arr = array(
+        'title' => $app->escape($request->get('title')),
+        'body' => $app->escape($request->get('body'))
+    );
 
     if ($muid != '') {
-        $bulk->update(
-            [
-            /*    "_id" => [
-                    "$oid" => $muid
-                ]*/
-                'muid' => $app->escape($muid),
-            ],
-            [
-                'title' => $app->escape($title),
-                'body' => $app->escape($body)
-            ]);
 
-        $message  = '{"muid":"'.$app->escape($muid).'",';
-        $message .= '"action":"update",';
+        $row_arr = array(
+            'channel' => $channel,
+            'muid' => $muid
+        );
+        $app['db']->update('messages', $message_arr, $row_arr);
+        $message_arr = array_merge($message_arr, $row_arr, array('action' => 'update'));
+        //$message_arr = array_merge($message_arr, );
     } else {
-        $muid = uniqid();
-        $bulk->insert([
-            'muid' => $app->escape($muid),
-            'time' => $app->escape($time),
-            'title' => $app->escape($title),
-            'body' => $app->escape($body)
-        ]);
 
-        $message  = '{"muid":"'.$muid.'",';
-        $message .= '"action":"add",';
+        $message_arr_add = array(
+            'channel' => $channel,
+            'muid' => uniqid(),
+            'time' => time()
+        );
+        $message_arr = array_merge($message_arr, $message_arr_add);
+        $app['db']->insert('messages', $message_arr);
+        $message_arr = array_merge($message_arr, array('action' => 'add'));
     }
 
-    $mongo->executeBulkWrite('newsticker.'.$channel, $bulk);
-
-    $message .= '"time":"'.time().'",';
-    $message .= '"title":"'.$app->escape($title).'",';
-    $message .= '"body":"'.$app->escape($body).'"}';
-
+    $message = json_encode($message_arr);
     $fanout = new Fanout\Fanout('f4ba43e0', '49R+AYRkC4HbwiC1EL1LOA==');
     $fanout->publish($channel, $message );
-    return $message ;
+    return $message;
 });
 
 $app->post('/form/delete/{channel}/{muid}', function (Request $request, $channel, $muid) use ($app) {
 
-    $message  = '{"muid":"'.$muid.'",';
-    $message .= '"action":"delete"}';
+    $message_arr = array(
+        'muid' => $muid
+    );
+    $app['db']->delete('messages', $message_arr);
+    $message_arr = array_merge($message_arr, array('action' => 'delete'));
 
+    $message = json_encode($message_arr);
     $fanout = new Fanout\Fanout('f4ba43e0', '49R+AYRkC4HbwiC1EL1LOA==');
     $fanout->publish($channel, $message );
     return $message ;
@@ -106,19 +117,8 @@ $app->post('/form/delete/{channel}/{muid}', function (Request $request, $channel
 
 $app->get('/api/initial/{channel}', function ($channel) use ($app) {
 
-    $mongo = new MongoDB\Driver\Manager("mongodb://peter:dermeter@ds031257.mlab.com:31257/newsticker");
-    //$filter = ['x' => ['$gt' => 1]];
-    $filter = [];
-    $options = [
-        'projection' => ['_id' => 0],
-        'sort' => ['time' => 1],
-    ];
-
-    $query = new MongoDB\Driver\Query($filter, $options);
-
-    $result = $mongo->executeQuery('newsticker.'.$channel, $query);
-    header('Content-Type: application/json');
-    return $app->json(json_encode($result->toArray()));
+    $message = $app['db']->fetchAll('SELECT * FROM messages WHERE channel = ?', array($channel));
+    return $app->json($message);
 });
 
 

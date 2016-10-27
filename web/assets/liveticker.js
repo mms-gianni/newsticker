@@ -27,8 +27,7 @@
 
         this.onLoad = function(data){
             console.log("Data Loaded success!");
-            var list = $.parseJSON( data );
-            $.each(list, $.proxy(function(i, message) {
+            $.each(data, $.proxy(function(i, message) {
                 this.addMessage(message);
             }, this));
         };
