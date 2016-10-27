@@ -71,12 +71,13 @@ $app->post('/form/submit/{channel}', function ( Request $request, $channel) use 
         $message  = '{"muid":"'.$app->escape($muid).'",';
         $message .= '"action":"update",';
     } else {
-        $muid = $bulk->insert([
-                'muid' => $app->escape($muid),
-                'time' => $app->escape($time),
-                'title' => $app->escape($title),
-                'body' => $app->escape($body)
-            ]);
+        $muid = uniqid();
+        $bulk->insert([
+            'muid' => $app->escape($muid),
+            'time' => $app->escape($time),
+            'title' => $app->escape($title),
+            'body' => $app->escape($body)
+        ]);
 
         $message  = '{"muid":"'.$muid.'",';
         $message .= '"action":"add",';
