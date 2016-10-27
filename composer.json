@@ -4,7 +4,9 @@
         "fanout/fanout": "^2.0",
         "twig/twig": "^1.26",
         "ext-mongodb": "^1.1",
-        "doctrine/dbal": "~2.2",
+        "doctrine/dbal": "~2.2"
+    },
+    "require-dev": {
         "heroku/heroku-buildpack-php": "^113.0"
     }
 }
