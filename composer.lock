@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d8f05103eaba9b50ff136772c1dc5759",
-    "content-hash": "4648c7b7333f0e30797d89348bfd8fcf",
+    "hash": "229aa73afdef68131b6bebb545a38cfb",
+    "content-hash": "2c88c5002d430cd569bb255308a2b76a",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -610,6 +610,50 @@
             "description": "A simple library to encode and decode JSON Web Tokens (JWT) in PHP. Should conform to the current spec.",
             "homepage": "https://github.com/firebase/php-jwt",
             "time": "2014-08-28 17:14:17"
+        },
+        {
+            "name": "heroku/heroku-buildpack-php",
+            "version": "v113",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heroku/heroku-buildpack-php.git",
+                "reference": "af7089595b889690df2594044c8626068178f739"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heroku/heroku-buildpack-php/zipball/af7089595b889690df2594044c8626068178f739",
+                "reference": "af7089595b889690df2594044c8626068178f739",
+                "shasum": ""
+            },
+            "bin": [
+                "bin/heroku-hhvm-apache2",
+                "bin/heroku-hhvm-nginx",
+                "bin/heroku-php-apache2",
+                "bin/heroku-php-nginx"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Zuelke",
+                    "email": "dz@heroku.com"
+                }
+            ],
+            "description": "Toolkit for starting a PHP application locally, with or without foreman, using the same config for PHP/HHVM and Apache2/Nginx as on Heroku",
+            "homepage": "https://github.com/heroku/heroku-buildpack-php",
+            "keywords": [
+                "apache",
+                "apache2",
+                "foreman",
+                "heroku",
+                "hhvm",
+                "nginx",
+                "php"
+            ],
+            "time": "2016-10-19 23:42:40"
         },
         {
             "name": "pimple/pimple",
