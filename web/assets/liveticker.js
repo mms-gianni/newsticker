@@ -17,7 +17,7 @@
         this.initialLoad = function (channel) {
 
             $.ajax({
-                url: '/index.php/api/initial/'+channel,
+                url: '/api/initial/'+channel,
                 type: 'get',
                 dataType: 'json',
                 success: this.onLoad.bind(this)
