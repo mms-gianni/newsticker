@@ -1,0 +1,17 @@
+{
+  "name": "realtimeticker",
+  "env": {
+    "SYMFONY_ENV": "prod",
+    "TZ": "Europe/Zurich"
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/php"
+    }
+  ]
+}
